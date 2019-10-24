@@ -22,8 +22,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic,strong) UISearchController *searchC;
 @property(nonatomic,strong) UISearchBar * searchB;
 @property(nonatomic,strong) UITableView * tableView;
-@property(nonatomic,strong) NSMutableArray * arrayF;
-@property(nonatomic,strong) NSMutableArray * arrayR;
 @property(nonatomic,strong) NSMutableArray * arrayNet;
 @property(nonatomic, strong) UIActivityIndicatorView * load;
 @end

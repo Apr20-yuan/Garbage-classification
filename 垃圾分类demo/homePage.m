@@ -21,7 +21,7 @@ UITableViewDataSource,
 UINavigationControllerDelegate,
 UIImagePickerControllerDelegate
 >
-- (void)filterContentForSearchText:(NSString*)searchText scope:(NSUInteger)scope;
+
 @property (nonatomic,strong) UIImagePickerController *imagePickerController;
 @end
 
@@ -55,11 +55,7 @@ UIImagePickerControllerDelegate
     _searchB.backgroundColor = [UIColor redColor];//self.view.backgroundColor;
     _searchB.placeholder = @"搜索获取垃圾的分类";
     _searchB.delegate = self;
-    arrayW = [[NSMutableArray alloc]init];
-    _arrayR = [[NSMutableArray alloc]init];
     _arrayNet = [[NSMutableArray alloc]init];
-    [self parasData];
-    
     [self.view addSubview:_searchB];
     [self AFNetmonitor];
     
@@ -80,48 +76,14 @@ UIImagePickerControllerDelegate
     [self.searchB setShowsCancelButton:NO animated:YES];
     _searchB.text = nil;
 }
-#pragma mark paras
-- (void) parasData{
-    NSString * path = [[NSBundle mainBundle]pathForResource:@"answer_data" ofType:@"json"];
-    NSData * data = [NSData dataWithContentsOfFile:path];
-    array = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
-    for(int i=0;i<array.count;i++)
-    {
-        NSDictionary * dic = [array objectAtIndex:i];
-        NSArray * a1 = [dic allKeys];
-        NSArray * a2 = [dic allValues];
-        NSString * s1 = [a1 objectAtIndex:0];
-        
-        NSString * s2 = [a2 objectAtIndex:0];
-        waste * wa = [[waste alloc]init];
-        wa.wName = s1;
-        wa.wType = s2;
-        [arrayW addObject:wa];
-    }
-    for(int i = 0; i< arrayW.count ;i++)
-    {
-        for(int j = i+1 ;j<arrayW.count; j++ )
-        {
-            waste * twst = [[waste alloc]init];
-            waste * wst = [[waste alloc]init];
-            twst = [arrayW objectAtIndex:i];
-            wst = [arrayW objectAtIndex:j];
-            if([twst.wName isEqualToString:wst.wName])
-            {
-                [arrayW removeObject:wst];
-            }
-        }
-    }
-}
+#pragma mark searchbar
 
 - (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar {
     [_photoRec setHidden:YES];
-    [self parasData];
     [self creatBack];
     [searchBar setShowsCancelButton:YES animated:YES]; // 动画显示取消按钮
-    [self filterContentForSearchText:@""];
-    [self creatTableView];
-    [self filterContentForSearchText:@""];
+    [_tableView setHidden:YES];
+   // [self creatTableView];
     //NSLog(@"搜索结果的数量为%lu",(unsigned long)_arrayR.count);
     
 }
@@ -135,20 +97,22 @@ UIImagePickerControllerDelegate
     //[searchBar resignFirstResponder];
 }
 -(void)searchBarSearchButtonClicked:(UISearchBar *)searchBar{
+    
     [self AFGetData];
-  //  [self filterContentForSearchText:[searchBar text]];
+   // [self creatTableView];
+    //[_tableView reloadData];
     NSLog(@"count is %lu",(unsigned long)_arrayNet.count);
 }
 #pragma  mark tableview!
 -(void)creatTableView{
-    _tableView = [[UITableView alloc]initWithFrame:CGRectMake(0, 150,[UIScreen mainScreen].bounds.size.width,[UIScreen mainScreen].bounds.size.height-100) style:UITableViewStylePlain];
+    _tableView = [[UITableView alloc]initWithFrame:CGRectMake(0, 150,self.view.bounds.size.width,self.view.bounds.size.height-100) style:UITableViewStylePlain];
     _tableView.delegate = self;
     _tableView.dataSource = self;
     [self.view addSubview:_tableView];
+    
 }
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-   // NSLog(@"sum is %d",_arrayR.count+_arrayNet.count);
-    return _arrayR.count+_arrayNet.count+1;
+    return _arrayNet.count;
 }
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     NSString * cellid = @"cell";
@@ -157,19 +121,15 @@ UIImagePickerControllerDelegate
     {
         cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellid];
     }
-    if(_arrayNet.count+_arrayR.count == 0)
+    if(self.arrayNet.count == 0)
     {
         cell.textLabel.text = @"暂无结果";
         cell.detailTextLabel.text = @"欢迎补充";
         return cell;
     }
     waste * wst = [[waste alloc]init];
-    if([indexPath row] < _arrayR.count)
-        wst = [_arrayR objectAtIndex:[indexPath row]];
-    else if([indexPath row] >= _arrayR.count&&[indexPath row] < _arrayNet.count+_arrayR.count)
-        wst = [_arrayNet objectAtIndex:[indexPath row]-_arrayR.count];
-    else
-        wst = nil;
+    wst = [self.arrayNet objectAtIndex:[indexPath row]];
+    NSLog(@"%lu----%ld",(unsigned long)_arrayNet.count,[indexPath row]);
     cell.textLabel.text = wst.wName;
     cell.detailTextLabel.text = wst.wType;
     return cell;
@@ -177,108 +137,109 @@ UIImagePickerControllerDelegate
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [self.searchB resignFirstResponder];
 }
-#pragma mark filter
--(void)filterContentForSearchText:(NSString *)searchText{
-    if([searchText length] == 0)
-    {
-        _arrayR = [NSMutableArray arrayWithArray:arrayW];
-        return;
-    }
-    NSPredicate * predicate = [NSPredicate predicateWithFormat:@"SELF.wName contains[c]%@",searchText];
-    NSArray * tempArray = [arrayW filteredArrayUsingPredicate:predicate];
-    _arrayR = [NSMutableArray arrayWithArray:tempArray];
-    [self.tableView reloadData];
-}
-
 #pragma mark AFNetwork
 - (void)AFGetData{
-    NSLog(@"start get!");
-    AFHTTPSessionManager * session = [AFHTTPSessionManager manager];
-    NSString *url = [[NSString alloc]init];
-    url = @"https://laji.lr3800.com/api.php?name=";
-    NSString * str = _searchB.text;
-    NSLog(@"the searchB.text is %@",str);
-    url = [url stringByAppendingString:str];
-    url = [url stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]];//重新编码url
-    NSLog(@"%@",url);
-    [session.responseSerializer setAcceptableContentTypes:[NSSet setWithObjects:@"text/html", nil]]; //设置text/html
-    [session GET:url parameters:nil headers:nil progress:nil
-         success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject)
-    {
-        UIActivityIndicatorView * load = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-        [load setFrame:CGRectMake(100, 100, 200, 200)];
-       // [load setHidden:NO];
-        [self.view bringSubviewToFront:load];
-        [self->_arrayNet removeAllObjects];
-      //  NSLog(@"get it!");
-      //  NSLog(@"%@",responseObject);
+    // 1.URL地址（参数可直接拼接到url后面）
+        NSString * urlStr = [NSString stringWithFormat:@"http://api.tianapi.com/txapi/lajifenlei/?key=3db609bd6c1e6b9b1522f9306f7d4b9a&word=%@",_searchB.text];
+        urlStr = [urlStr stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];//参数带中文需转UTF8
+        NSURL *url = [NSURL URLWithString:urlStr];
+        NSLog(@"url is %@",urlStr);
+        // 2.构建request
+
+        // 不可变对象，默认将get请求头信息保持到request里
+
+        //    NSURLRequest *request = [NSURLRequest requestWithURL:url];
+
+        //    NSURLRequest *request = [NSURLRequest requestWithURL:url cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:10];
+
+        NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+
+        [request setHTTPMethod:@"GET"]; //请求方式
+
+        [request setTimeoutInterval:10]; //请求超时限制
+
+        [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData]; //缓存模式
+
+        // 3.单列获取NSURLSession
+
+        NSURLSession *session = [NSURLSession sharedSession];
+
+        // 4.创建请求任务
+
+        // data 返回的数据
+
+        // response 响应头
+
+        // error 错误信息
+
+    NSURLSessionDataTask *task = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"请求错误：%@", error);
+            return;
+        }
+        // data到NSString
         NSDictionary * dict = [[NSDictionary alloc]init];
-        dict = responseObject;
-    //    NSLog(@"%@",dict);
+        dict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+        //    NSLog(@"%@",dict);
         NSArray * list = [[NSArray alloc]init];
-    //self->_arrayNet = nil;
+        //self->_arrayNet = nil;
         list = [dict objectForKey:@"newslist"];
-        //NSLog(@"!!!list!!!\n%@",list);
+            //NSLog(@"!!!list!!!\n%@",list);
         NSDictionary * dict2 = [[NSDictionary alloc]init];
         dict2 = [dict objectForKey:@"newslist"];
-       // NSLog(@"!!!dict!!!\n%@",dict2);
-        
-        for(int i = 0; i < list.count ; i++)
-        {
-            waste * tWaste = [[waste alloc]init];
-            NSDictionary * dict1 = [[NSDictionary alloc]init];
-            dict1 = list[i];
-            NSLog(@"the dict is %@",dict1);
-            int type = [[dict1 objectForKey:@"type"] intValue];
-            switch (type) {
-                case 0:
-                {
-                    tWaste.wName = [dict1 objectForKey:@"name"];
-                    tWaste.wType = @"可回收垃圾";
-                    break;
+           // NSLog(@"!!!dict!!!\n%@",dict2);
+        [self->_arrayNet removeAllObjects];
+            for(int i = 0; i < list.count ; i++)
+            {
+                waste * tWaste = [[waste alloc]init];
+                NSDictionary * dict1 = [[NSDictionary alloc]init];
+                dict1 = list[i];
+               // NSLog(@"the dict is %@",dict1);
+                int type = [[dict1 objectForKey:@"type"] intValue];
+                switch (type) {
+                    case 0:
+                    {
+                        tWaste.wName = [dict1 objectForKey:@"name"];
+                        tWaste.wType = @"可回收垃圾";
+                        break;
+                    }
+                    case 1:
+                    {
+                        tWaste.wName = [dict1 objectForKey:@"name"];
+                        tWaste.wType = @"有害垃圾";
+                        break;
+                    }
+                    case 2:
+                    {
+                        tWaste.wName = [dict1 objectForKey:@"name"];
+                        tWaste.wType = @"湿垃圾";
+                        break;
+                    }
+                    case 3:
+                    {
+                        tWaste.wName = [dict1 objectForKey:@"name"];
+                        tWaste.wType = @"干垃圾";
+                        break;
+                    }
+                    default:
+                    {   NSLog(@"错误！！");
+                        break;
+                    }
                 }
-                case 1:
-                {
-                    tWaste.wName = [dict1 objectForKey:@"name"];
-                    tWaste.wType = @"有害垃圾";
-                    break;
-                }
-                case 2:
-                {
-                    tWaste.wName = [dict1 objectForKey:@"name"];
-                    tWaste.wType = @"湿垃圾";
-                    break;
-                }
-                case 3:
-                {
-                    tWaste.wName = [dict1 objectForKey:@"name"];
-                    tWaste.wType = @"干垃圾";
-                    break;
-                }
-                default:
-                {   NSLog(@"错误！！");
-                    break;
-                }
+               // NSLog(@"%@",[dict1 objectForKey:@"name"]);
+                [self->_arrayNet addObject:tWaste];
+
+                
+
             }
-            NSLog(@"%@",[dict1 objectForKey:@"name"]);
-            [self->_arrayNet addObject:tWaste];
-        }
-//        for(int i= 0;i< _arrayNet.count ;i++)
-//        {
-//            waste * waste1 = [[waste alloc]init];
-//            waste1 = [_arrayNet objectAtIndex:i];
-//            NSLog(@"%@...%@",waste1.wType,waste1.wName);
-//        }
-        NSLog(@"%@",self->_arrayNet);
-        [self filterContentForSearchText:[self.searchB text]];
-        [load setHidden:YES];
-       
-    }
-         failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error)
-    {
-        NSLog(@"错误！！！！");
-        NSLog(@"%@",error);
-    }];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self creatTableView];
+            });
+           
+        }];
+        // 执行请求任务
+
+        [task resume];
 }
 - (void)AFNetmonitor{
     
@@ -394,6 +355,7 @@ UIImagePickerControllerDelegate
         self.imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
         [self presentViewController:self.imagePickerController animated:YES completion:^{
             
+            
         }];
     }
 }
@@ -415,16 +377,35 @@ UIImagePickerControllerDelegate
 - (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo
 {
     //传输图片给识图api  未完成。
+    [self netPost:image];
     NSLog(@"保存图片成功");
 }
-/*
-#pragma mark - Navigation
+#pragma mark POST传输base64编码后和图片
+- (void)netPost:(UIImage *)image
+{
+    NSURL * url = [NSURL URLWithString:@"http://api.tianapi.com/txapi/imglajifenlei/"];
+    NSMutableURLRequest * request = [NSMutableURLRequest requestWithURL:url];
+    request.timeoutInterval = 5.0;
+    request.HTTPMethod = @"POST";
+    NSData * data = UIImageJPEGRepresentation(image, 1.0f);
+    NSString * str = [data base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+    NSString *page = CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, (CFStringRef)str, nil, CFSTR(":/?#[]@!$&’()*+,;="), kCFStringEncodingUTF8)); //重新编码 base64 字符串在传输过程中特殊字符（比如：+）被替换成空格了导致不能转
+    NSString * bodyStr = [NSString stringWithFormat:@"key=%@&img=%@",@"3db609bd6c1e6b9b1522f9306f7d4b9a",page];
+    NSLog(@"bodyString is %@",bodyStr);
+    request.HTTPBody = [bodyStr dataUsingEncoding:NSUTF8StringEncoding];
+    NSURLSession *session = [NSURLSession sharedSession];
+    
+    [[session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        NSDictionary * jsonDict = [[NSDictionary alloc]init];
+        jsonDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
+        NSLog(@"json is %@",jsonDict);
 
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+    }]
+     resume];
+
+
+
+    
 }
-*/
 
 @end
