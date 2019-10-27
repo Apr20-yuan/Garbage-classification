@@ -5,7 +5,8 @@
 //  Created by 董渊 on 2019/7/6.
 //  Copyright © 2019 董渊. All rights reserved.
 //
-
+#define SC_With self.view.bounds.size.width
+#define SC_Height self.view.bounds.size.height
 #import "homePage.h"
 #import "waste.h"
 #import "searchAll.h"
@@ -56,6 +57,7 @@ UIImagePickerControllerDelegate
     _searchB.placeholder = @"搜索获取垃圾的分类";
     _searchB.delegate = self;
     _arrayNet = [[NSMutableArray alloc]init];
+    _arrayNetImg = [[NSMutableArray alloc]init];
     [self.view addSubview:_searchB];
     [self AFNetmonitor];
     
@@ -65,7 +67,8 @@ UIImagePickerControllerDelegate
 -(void)creatBack{
     UITabBarItem * homeP = [[UITabBarItem alloc]initWithTitle:@"首页" image:[UIImage imageNamed:@"home"] tag:101];
     self.tabBarItem = homeP;
-    UIBarButtonItem * back = [[UIBarButtonItem alloc]initWithTitle:@"返回首页" style:UIBarButtonItemStyleDone target:self action:@selector(backOnclick)];
+    UIBarButtonItem * back = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemClose target:self action:@selector(backOnclick)];
+   // UIBarButtonItem * back = [[UIBarButtonItem alloc]initWithTitle:@"返回首页" style:UIBarButtonSystemItemCancel target:self action:@selector(backOnclick)];
     self.navigationItem.leftBarButtonItem = back;
 }
 -(void)backOnclick{
@@ -75,6 +78,7 @@ UIImagePickerControllerDelegate
     self.navigationItem.leftBarButtonItem = nil;
     [self.searchB setShowsCancelButton:NO animated:YES];
     _searchB.text = nil;
+    [_tableViewImg setHidden:YES];
 }
 #pragma mark searchbar
 
@@ -97,7 +101,7 @@ UIImagePickerControllerDelegate
     //[searchBar resignFirstResponder];
 }
 -(void)searchBarSearchButtonClicked:(UISearchBar *)searchBar{
-    
+    [_tableView setHidden:YES];
     [self AFGetData];
    // [self creatTableView];
     //[_tableView reloadData];
@@ -111,10 +115,22 @@ UIImagePickerControllerDelegate
     [self.view addSubview:_tableView];
     
 }
--(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return _arrayNet.count;
+-(void)creatTableViewImg{
+    _tableViewImg = [[UITableView alloc]initWithFrame:CGRectMake(SC_With/7, SC_Height/5, SC_With/7*5, SC_Height/5*3)];
+    _tableViewImg.dataSource = self;
+    _tableViewImg.delegate = self;
+    [self.view addSubview:_tableViewImg];
 }
+-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    if(tableView == _tableView)
+        return _arrayNet.count;
+    else
+        return _arrayNetImg.count;
+}
+
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    if(tableView == _tableView)
+    {
     NSString * cellid = @"cell";
     UITableViewCell * cell = [_tableView dequeueReusableCellWithIdentifier:cellid];
     if(cell == nil)
@@ -133,25 +149,40 @@ UIImagePickerControllerDelegate
     cell.textLabel.text = wst.wName;
     cell.detailTextLabel.text = wst.wType;
     return cell;
+    }
+    else
+    {
+        NSString * cellid = @"cell1";
+        UITableViewCell * cell = [_tableViewImg dequeueReusableCellWithIdentifier:cellid];
+        if(cell == nil)
+        {
+            cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellid];
+        }
+        if(self.arrayNetImg.count == 0)
+        {
+            cell.textLabel.text = @"暂无结果";
+            cell.detailTextLabel.text = @"欢迎补充";
+            return cell;
+        }
+        waste * wst = [[waste alloc]init];
+        wst = [self.arrayNetImg objectAtIndex:[indexPath row]];
+        NSLog(@"%lu----%ld",(unsigned long)_arrayNetImg.count,[indexPath row]);
+        cell.textLabel.text = wst.wName;
+        cell.detailTextLabel.text = wst.wType;
+        return cell;
+    }
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     [self.searchB resignFirstResponder];
 }
 #pragma mark AFNetwork
 - (void)AFGetData{
-    // 1.URL地址（参数可直接拼接到url后面）
+    
         NSString * urlStr = [NSString stringWithFormat:@"http://api.tianapi.com/txapi/lajifenlei/?key=3db609bd6c1e6b9b1522f9306f7d4b9a&word=%@",_searchB.text];
         urlStr = [urlStr stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];//参数带中文需转UTF8
         NSURL *url = [NSURL URLWithString:urlStr];
         NSLog(@"url is %@",urlStr);
-        // 2.构建request
-
-        // 不可变对象，默认将get请求头信息保持到request里
-
-        //    NSURLRequest *request = [NSURLRequest requestWithURL:url];
-
-        //    NSURLRequest *request = [NSURLRequest requestWithURL:url cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:10];
-
+        
         NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
 
         [request setHTTPMethod:@"GET"]; //请求方式
@@ -160,17 +191,9 @@ UIImagePickerControllerDelegate
 
         [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData]; //缓存模式
 
-        // 3.单列获取NSURLSession
+        
 
         NSURLSession *session = [NSURLSession sharedSession];
-
-        // 4.创建请求任务
-
-        // data 返回的数据
-
-        // response 响应头
-
-        // error 错误信息
 
     NSURLSessionDataTask *task = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         if (error) {
@@ -372,12 +395,12 @@ UIImagePickerControllerDelegate
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary<UIImagePickerControllerInfoKey,id> *)info {
     [picker dismissViewControllerAnimated:YES completion:nil];
     UIImage *image = [info valueForKey:UIImagePickerControllerEditedImage];
-    UIImageWriteToSavedPhotosAlbum(image, self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
+    [self netPost:image];
+    //UIImageWriteToSavedPhotosAlbum(image, self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
 }
 - (void)image:(UIImage *)image didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo
 {
-    //传输图片给识图api  未完成。
-    [self netPost:image];
+   // [self netPost:image];
     NSLog(@"保存图片成功");
 }
 #pragma mark POST传输base64编码后和图片
@@ -396,10 +419,72 @@ UIImagePickerControllerDelegate
     NSURLSession *session = [NSURLSession sharedSession];
     
     [[session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        [self->_arrayNetImg removeAllObjects];
         NSDictionary * jsonDict = [[NSDictionary alloc]init];
         jsonDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
         NSLog(@"json is %@",jsonDict);
-
+        NSArray * list = [[NSArray alloc]init];
+        list = [jsonDict objectForKey:@"newslist"];
+        for(int i = 0; i < list.count ; i++)
+            {
+                waste * tWaste = [[waste alloc]init];
+                NSDictionary * dict1 = [[NSDictionary alloc]init];
+                dict1 = list[i];
+                int type = [[dict1 objectForKey:@"lajitype"] intValue];
+                switch (type) {
+                    case 0:
+                    {
+                        tWaste.wName = [dict1 objectForKey:@"name"];
+                        tWaste.wType = @"可回收垃圾";
+                        tWaste.trust = [[dict1 objectForKey:@"trust"]intValue];
+                        break;
+                    }
+                    case 1:
+                    {
+                        tWaste.wName = [dict1 objectForKey:@"name"];
+                        tWaste.wType = @"有害垃圾";
+                        tWaste.trust = [[dict1 objectForKey:@"trust"]intValue];
+                        break;
+                    }
+                    case 2:
+                    {
+                        tWaste.wName = [dict1 objectForKey:@"name"];
+                        tWaste.wType = @"湿垃圾";
+                        tWaste.trust = [[dict1 objectForKey:@"trust"]intValue];
+                        break;
+                    }
+                    case 3:
+                    {
+                        tWaste.wName = [dict1 objectForKey:@"name"];
+                        tWaste.wType = @"干垃圾";
+                        tWaste.trust = [[dict1 objectForKey:@"trust"]intValue];
+                        break;
+                    }
+                    case 4:
+                    {
+                        tWaste.wName = [dict1 objectForKey:@"name"];
+                        tWaste.wType = @"未识别类型";
+                        tWaste.trust = [[dict1 objectForKey:@"trust"]intValue];
+                        break;
+                    }
+                    default:
+                    {   NSLog(@"错误！！");
+                        break;
+                    }
+                }
+                [self->_arrayNetImg addObject:tWaste];
+            } // 解析完成
+        for(int i = 0; i<self->_arrayNetImg.count;i++)
+        {
+            waste * wst = [[waste alloc]init];
+            wst = self->_arrayNetImg[i];
+            NSLog(@"%@--%@--%d",wst.wName,wst.wType,wst.trust);
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self creatBack];
+            [self creatTableViewImg];
+        });
+        
     }]
      resume];
 

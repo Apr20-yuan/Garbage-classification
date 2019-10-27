@@ -11,4 +11,5 @@
 @implementation waste
 @synthesize wName = _wName;
 @synthesize wType = _wType;
+@synthesize trust = _trust;
 @end

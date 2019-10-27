@@ -14,9 +14,11 @@ NS_ASSUME_NONNULL_BEGIN
 {
     NSString * _wName;
     NSString * _wType;
+    int trust;
 }
 @property(retain,nonatomic) NSString *wName;
 @property(retain,nonatomic) NSString *wType;
+@property(nonatomic) int trust;
 @end
 
 NS_ASSUME_NONNULL_END
