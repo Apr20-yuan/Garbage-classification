@@ -5,7 +5,7 @@
 //  Created by 董渊 on 2019/7/6.
 //  Copyright © 2019 董渊. All rights reserved.
 //
-#define SC_With self.view.bounds.size.width
+#define SC_Width self.view.bounds.size.width
 #define SC_Height self.view.bounds.size.height
 #import "homePage.h"
 #import "waste.h"
@@ -14,6 +14,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import <AssetsLibrary/AssetsLibrary.h>
 #import <Photos/Photos.h>
+#import "wasteCell.h"
 @interface homePage ()<
 UISearchBarDelegate,
 UISearchResultsUpdating,
@@ -109,33 +110,59 @@ UIImagePickerControllerDelegate
 }
 #pragma  mark tableview!
 -(void)creatTableView{
-    _tableView = [[UITableView alloc]initWithFrame:CGRectMake(0, 150,self.view.bounds.size.width,self.view.bounds.size.height-100) style:UITableViewStylePlain];
+    _tableView = [[UITableView alloc]initWithFrame:CGRectMake(10, 150,self.view.bounds.size.width-20,self.view.bounds.size.height-150) style:UITableViewStyleGrouped];
     _tableView.delegate = self;
     _tableView.dataSource = self;
+    _tableView.backgroundColor = [UIColor clearColor];
     [self.view addSubview:_tableView];
     
 }
 -(void)creatTableViewImg{
-    _tableViewImg = [[UITableView alloc]initWithFrame:CGRectMake(SC_With/7, SC_Height/5, SC_With/7*5, SC_Height/5*3)];
+    _tableViewImg = [[UITableView alloc]initWithFrame:CGRectMake(10,150,SC_Width-20,SC_Height-150) style:UITableViewStyleGrouped];
     _tableViewImg.dataSource = self;
     _tableViewImg.delegate = self;
+    _tableViewImg.backgroundColor = [UIColor clearColor];
     [self.view addSubview:_tableViewImg];
 }
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    if(tableView == _tableView)
-        return _arrayNet.count;
-    else
-        return _arrayNetImg.count;
+    return 1;
 }
-
+-(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    if(tableView == _tableViewImg)
+        return _arrayNetImg.count;
+    else
+        return _arrayNet.count;
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    return 40;
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
+    return 2;
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section{
+    return 5;
+}
+-(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    UIView *view=[[UIView alloc] initWithFrame:CGRectMake(0, 0,SC_Width, 1)];
+    view.backgroundColor = [UIColor clearColor];
+    return view ;
+}
+-(UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
+{
+    UIView *view=[[UIView alloc] initWithFrame:CGRectMake(0, 0,SC_Height, 1)];
+    view.backgroundColor = [UIColor clearColor];
+    return view;
+}
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     if(tableView == _tableView)
     {
     NSString * cellid = @"cell";
-    UITableViewCell * cell = [_tableView dequeueReusableCellWithIdentifier:cellid];
+        wasteCell * cell = [[wasteCell alloc]init];
     if(cell == nil)
     {
-        cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellid];
+        cell = [_tableView dequeueReusableCellWithIdentifier:cellid];
     }
     if(self.arrayNet.count == 0)
     {
@@ -144,19 +171,44 @@ UIImagePickerControllerDelegate
         return cell;
     }
     waste * wst = [[waste alloc]init];
-    wst = [self.arrayNet objectAtIndex:[indexPath row]];
-    NSLog(@"%lu----%ld",(unsigned long)_arrayNet.count,[indexPath row]);
-    cell.textLabel.text = wst.wName;
-    cell.detailTextLabel.text = wst.wType;
+    wst = [self.arrayNet objectAtIndex:indexPath.section];
+   // NSLog(@"%lu----%ld",(unsigned long)_arrayNet.count,[indexPath row]);
+    cell.name.text = wst.wName;
+    cell.type.text = wst.wType;
+        if([cell.type.text  isEqual: @"可回收垃圾"])
+        {
+            cell.img.image = [UIImage imageNamed:@"c0"];
+            cell.backgroundColor = [UIColor colorWithRed:80/255.0 green:161/255.0 blue:64/255.0 alpha:1];
+        }
+        else if([cell.type.text  isEqual: @"有害垃圾"])
+        {
+            cell.img.image = [UIImage imageNamed:@"c1"];
+            cell.backgroundColor = [UIColor colorWithRed:202/255.0 green:32/255.0 blue:34/255.0 alpha:1];
+        }
+        else if ([cell.type.text  isEqual: @"干垃圾"])
+        {
+            cell.img.image = [UIImage imageNamed:@"c2"];
+            cell.backgroundColor = [UIColor colorWithRed:210/255.0 green:182/255.0 blue:42/255.0 alpha:1];
+        }
+        else if([cell.type.text isEqualToString:@"湿垃圾"])
+        {
+            cell.img.image = [UIImage imageNamed:@"c3"];
+            cell.backgroundColor = [UIColor colorWithRed:19/255.0 green:96/255.0 blue:168/255.0 alpha:1];
+        }
+        else if([cell.type.text isEqualToString:@"电子废弃物"])
+        {
+            cell.img.image = [UIImage imageNamed:@"c4"];
+            cell.backgroundColor = [UIColor orangeColor];
+        }
     return cell;
     }
     else
     {
         NSString * cellid = @"cell1";
-        UITableViewCell * cell = [_tableViewImg dequeueReusableCellWithIdentifier:cellid];
+        wasteCell * cell = [[wasteCell alloc]init];
         if(cell == nil)
         {
-            cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellid];
+            cell = [_tableViewImg dequeueReusableCellWithIdentifier:cellid];
         }
         if(self.arrayNetImg.count == 0)
         {
@@ -165,10 +217,35 @@ UIImagePickerControllerDelegate
             return cell;
         }
         waste * wst = [[waste alloc]init];
-        wst = [self.arrayNetImg objectAtIndex:[indexPath row]];
-        NSLog(@"%lu----%ld",(unsigned long)_arrayNetImg.count,[indexPath row]);
-        cell.textLabel.text = wst.wName;
-        cell.detailTextLabel.text = wst.wType;
+        wst = [self.arrayNetImg objectAtIndex:indexPath.section];
+        //NSLog(@"%lu----%ld",(unsigned long)_arrayNetImg.count,[indexPath row]);
+        cell.name.text = wst.wName;
+        cell.type.text = wst.wType;
+        if([cell.type.text  isEqual: @"可回收垃圾"])
+        {
+            cell.img.image = [UIImage imageNamed:@"c0"];
+            cell.backgroundColor = [UIColor greenColor];
+        }
+        else if([cell.type.text  isEqual: @"有害垃圾"])
+        {
+            cell.img.image = [UIImage imageNamed:@"c1"];
+            cell.backgroundColor = [UIColor redColor];
+        }
+        else if ([cell.type.text  isEqual: @"干垃圾"])
+        {
+            cell.img.image = [UIImage imageNamed:@"c2"];
+            cell.backgroundColor = [UIColor yellowColor];
+        }
+        else if([cell.type.text isEqualToString:@"湿垃圾"])
+        {
+            cell.img.image = [UIImage imageNamed:@"c3"];
+            cell.backgroundColor = [UIColor blueColor];
+        }
+        else if([cell.type.text isEqualToString:@"电子废弃物"])
+        {
+            cell.img.image = [UIImage imageNamed:@"c4"];
+            cell.backgroundColor = [UIColor orangeColor];
+        }
         return cell;
     }
 }
@@ -482,6 +559,7 @@ UIImagePickerControllerDelegate
         }
         dispatch_async(dispatch_get_main_queue(), ^{
             [self creatBack];
+            [self->_photoRec setHidden:YES];
             [self creatTableViewImg];
         });
         

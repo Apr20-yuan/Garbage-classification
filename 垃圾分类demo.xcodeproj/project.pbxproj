@@ -31,7 +31,7 @@
 		47426DC022D3875C00A5161B /* dry.m in Sources */ = {isa = PBXBuildFile; fileRef = 47426DBF22D3875C00A5161B /* dry.m */; };
 		47426DC322D3876A00A5161B /* wet.m in Sources */ = {isa = PBXBuildFile; fileRef = 47426DC222D3876A00A5161B /* wet.m */; };
 		47426DC622D3878900A5161B /* elec.m in Sources */ = {isa = PBXBuildFile; fileRef = 47426DC522D3878900A5161B /* elec.m */; };
-		47426DC922D49D6200A5161B /* searchAll.m in Sources */ = {isa = PBXBuildFile; fileRef = 47426DC822D49D6200A5161B /* searchAll.m */; };
+		47CB28A0236AD009008B3CAB /* wasteCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 47CB289E236AD008008B3CAB /* wasteCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -99,8 +99,8 @@
 		47426DC222D3876A00A5161B /* wet.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = wet.m; sourceTree = "<group>"; };
 		47426DC422D3878900A5161B /* elec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = elec.h; sourceTree = "<group>"; };
 		47426DC522D3878900A5161B /* elec.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = elec.m; sourceTree = "<group>"; };
-		47426DC722D49D6200A5161B /* searchAll.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = searchAll.h; sourceTree = "<group>"; };
-		47426DC822D49D6200A5161B /* searchAll.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = searchAll.m; sourceTree = "<group>"; };
+		47CB289E236AD008008B3CAB /* wasteCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = wasteCell.m; sourceTree = "<group>"; };
+		47CB289F236AD008008B3CAB /* wasteCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wasteCell.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -178,8 +178,8 @@
 				47426DC222D3876A00A5161B /* wet.m */,
 				47426DC422D3878900A5161B /* elec.h */,
 				47426DC522D3878900A5161B /* elec.m */,
-				47426DC722D49D6200A5161B /* searchAll.h */,
-				47426DC822D49D6200A5161B /* searchAll.m */,
+				47CB289F236AD008008B3CAB /* wasteCell.h */,
+				47CB289E236AD008008B3CAB /* wasteCell.m */,
 			);
 			path = "垃圾分类demo";
 			sourceTree = "<group>";
@@ -355,6 +355,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				47CB28A0236AD009008B3CAB /* wasteCell.m in Sources */,
 				47426DC322D3876A00A5161B /* wet.m in Sources */,
 				47213D4222D3296600DA38C4 /* waste.m in Sources */,
 				47426DC022D3875C00A5161B /* dry.m in Sources */,
@@ -367,7 +368,6 @@
 				47213D3722D0614C00DA38C4 /* homePage.m in Sources */,
 				4724B8EB230E988E00D51450 /* AFURLSessionManager.m in Sources */,
 				4724B8ED230E988E00D51450 /* AFNetworkReachabilityManager.m in Sources */,
-				47426DC922D49D6200A5161B /* searchAll.m in Sources */,
 				4724B8EC230E988E00D51450 /* AFURLRequestSerialization.m in Sources */,
 				47426DC622D3878900A5161B /* elec.m in Sources */,
 				4724B8EA230E988E00D51450 /* AFHTTPSessionManager.m in Sources */,

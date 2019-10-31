@@ -56,25 +56,25 @@
             cell.textLabel.text = @"可回收垃圾";
             cell.textLabel.font = [UIFont systemFontOfSize:25];
             cell.imageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"c%ld",[indexPath row]]];
-            cell.backgroundColor = [UIColor greenColor];
+            cell.backgroundColor = [UIColor colorWithRed:80/255.0 green:161/255.0 blue:64/255.0 alpha:1];
             break;
         case 1:
             cell.textLabel.text = @"有害垃圾";
              cell.textLabel.font = [UIFont systemFontOfSize:25];
             cell.imageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"c%ld",[indexPath row]]];
-            cell.backgroundColor = [UIColor redColor];
+            cell.backgroundColor = [UIColor colorWithRed:202/255.0 green:32/255.0 blue:34/255.0 alpha:1];
             break;
         case 2:
             cell.textLabel.text = @"干垃圾";
              cell.textLabel.font = [UIFont systemFontOfSize:25];
             cell.imageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"c%ld",[indexPath row]]];
-            cell.backgroundColor = [UIColor yellowColor];
+            cell.backgroundColor = [UIColor colorWithRed:210/255.0 green:182/255.0 blue:42/255.0 alpha:1];
             break;
         case 3:
             cell.textLabel.text = @"湿垃圾";
              cell.textLabel.font = [UIFont systemFontOfSize:25];
             cell.imageView.image = [UIImage imageNamed:[NSString stringWithFormat:@"c%ld",[indexPath row]]];
-            cell.backgroundColor = [UIColor blueColor];
+            cell.backgroundColor = [UIColor colorWithRed:19/255.0 green:96/255.0 blue:168/255.0 alpha:1];
             break;
             
         case 4:
