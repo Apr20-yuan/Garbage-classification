@@ -36,29 +36,44 @@ UIImagePickerControllerDelegate
     self.tabBarItem = homeP;
 #pragma mark 设置button
     _photoRec = [UIButton  buttonWithType:UIButtonTypeSystem];
-    NSInteger width = [UIScreen mainScreen].bounds.size.width;
-    NSInteger hegiht = [UIScreen mainScreen].bounds.size.height;
-    NSInteger widthOfBtn = 200;
+    NSInteger widthOfBtn = SC_Width*0.5;
     _photoRec.backgroundColor = [UIColor colorWithRed:45/255.0 green:103/255.0 blue:113/255.0 alpha:1.0];
-    _photoRec.frame=CGRectMake((width-widthOfBtn)/2, (hegiht-widthOfBtn)/3, widthOfBtn, widthOfBtn);
+    _photoRec.frame=CGRectMake((SC_Width-widthOfBtn)/2, (SC_Height-widthOfBtn)/3, widthOfBtn, widthOfBtn);
     _photoRec.layer.cornerRadius = widthOfBtn/2;
     [_photoRec setImage:[UIImage imageNamed:@"photo"] forState:UIControlStateNormal];
+    
     [_photoRec setTitle:@"拍照识别" forState:UIControlStateNormal];
     _photoRec.titleLabel.font = [UIFont systemFontOfSize:20];
     [_photoRec setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     self.view.backgroundColor = [UIColor greenColor];
     CGFloat totalHeight = _photoRec.imageView.frame.size.height + _photoRec.titleLabel.frame.size.height;
-    [_photoRec setImageEdgeInsets:UIEdgeInsetsMake(-(totalHeight - _photoRec.imageView.frame.size.height), 0.0, 5, -_photoRec.titleLabel.frame.size.width)];
-    [_photoRec setTitleEdgeInsets:UIEdgeInsetsMake(0.0, -_photoRec.imageView.frame.size.width - 6, -(totalHeight - _photoRec.titleLabel.frame.size.height)- 10,0.0)];
+    [_photoRec setImageEdgeInsets:UIEdgeInsetsMake(-_photoRec.titleLabel.intrinsicContentSize.height, 0, 0, -_photoRec.titleLabel.intrinsicContentSize.width)];
+    [_photoRec setTitleEdgeInsets:UIEdgeInsetsMake(_photoRec.currentImage.size.height, -_photoRec.currentImage.size.width, 0, 0)];
+//    [_photoRec setImageEdgeInsets:UIEdgeInsetsMake(-(totalHeight - _photoRec.imageView.frame.size.height), 0.0, 5, -_photoRec.titleLabel.frame.size.width)];
+//    [_photoRec setTitleEdgeInsets:UIEdgeInsetsMake(0.0, -_photoRec.imageView.frame.size.width - 6, -(totalHeight - _photoRec.titleLabel.frame.size.height)- 10,0.0)];
     [_photoRec addTarget:self action:@selector(imageViewIsSelector) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:_photoRec];
 #pragma mark 设置searchBar
-    _searchB = [[UISearchBar alloc]initWithFrame:CGRectMake(0,100, width, 40)];
-    _searchB.backgroundColor = [UIColor redColor];//self.view.backgroundColor;
+    _searchB = [[UISearchBar alloc]initWithFrame:CGRectMake(0,self.navigationController.navigationBar.frame.size.height+[[UIApplication sharedApplication] statusBarFrame].size.height+5,SC_Width, 40)];
+    
+    for (UIView *subview in _searchB.subviews) {
+        for(UIView* grandSonView in subview.subviews){
+            if ([grandSonView isKindOfClass:NSClassFromString(@"UISearchBarBackground")]) {
+                grandSonView.alpha = 0.0f;
+            }else if([grandSonView isKindOfClass:NSClassFromString(@"UISearchBarTextField")] ){
+                NSLog(@"Keep textfiedld bkg color");
+            }else{
+                grandSonView.alpha = 0.0f;
+            }
+        }
+    }
+    _searchB.backgroundColor = [UIColor clearColor];//self.view.backgroundColor;
+    _searchB.translucent = YES;
     _searchB.placeholder = @"搜索获取垃圾的分类";
     _searchB.delegate = self;
     _arrayNet = [[NSMutableArray alloc]init];
     _arrayNetImg = [[NSMutableArray alloc]init];
+   
     [self.view addSubview:_searchB];
     [self AFNetmonitor];
     
@@ -103,6 +118,8 @@ UIImagePickerControllerDelegate
 }
 -(void)searchBarSearchButtonClicked:(UISearchBar *)searchBar{
     [_tableView setHidden:YES];
+    [self.searchB resignFirstResponder];
+    [searchBar setShowsCancelButton:YES animated:YES];
     [self AFGetData];
    // [self creatTableView];
     //[_tableView reloadData];
@@ -200,6 +217,10 @@ UIImagePickerControllerDelegate
             cell.img.image = [UIImage imageNamed:@"c4"];
             cell.backgroundColor = [UIColor orangeColor];
         }
+        else
+        {
+            cell.backgroundColor = [UIColor grayColor];
+        }
     return cell;
     }
     else
@@ -224,27 +245,31 @@ UIImagePickerControllerDelegate
         if([cell.type.text  isEqual: @"可回收垃圾"])
         {
             cell.img.image = [UIImage imageNamed:@"c0"];
-            cell.backgroundColor = [UIColor greenColor];
+            cell.backgroundColor = [UIColor colorWithRed:80/255.0 green:161/255.0 blue:64/255.0 alpha:1];
         }
         else if([cell.type.text  isEqual: @"有害垃圾"])
         {
             cell.img.image = [UIImage imageNamed:@"c1"];
-            cell.backgroundColor = [UIColor redColor];
+            cell.backgroundColor = [UIColor colorWithRed:202/255.0 green:32/255.0 blue:34/255.0 alpha:1];
         }
         else if ([cell.type.text  isEqual: @"干垃圾"])
         {
             cell.img.image = [UIImage imageNamed:@"c2"];
-            cell.backgroundColor = [UIColor yellowColor];
+            cell.backgroundColor = [UIColor colorWithRed:210/255.0 green:182/255.0 blue:42/255.0 alpha:1];
         }
         else if([cell.type.text isEqualToString:@"湿垃圾"])
         {
             cell.img.image = [UIImage imageNamed:@"c3"];
-            cell.backgroundColor = [UIColor blueColor];
+            cell.backgroundColor = [UIColor colorWithRed:19/255.0 green:96/255.0 blue:168/255.0 alpha:1];
         }
         else if([cell.type.text isEqualToString:@"电子废弃物"])
         {
             cell.img.image = [UIImage imageNamed:@"c4"];
             cell.backgroundColor = [UIColor orangeColor];
+        }
+        else
+        {
+            cell.backgroundColor = [UIColor grayColor];
         }
         return cell;
     }

@@ -79,7 +79,6 @@
     cell.textLabel.text = wst.wName;
     cell.detailTextLabel.text = wst.wType;
     return cell;
-    
 }
 /*
  #pragma mark - Navigation
