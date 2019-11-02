@@ -29,8 +29,6 @@
     NSString * path = [[NSBundle mainBundle]pathForResource:@"answer_data" ofType:@"json"];
     NSData * data = [NSData dataWithContentsOfFile:path];
     array = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
-    if([array isKindOfClass:[NSArray class]])
-        NSLog(@"is is is ");
     for(int i=0;i<array.count;i++)
     {
         NSDictionary * dic = [array objectAtIndex:i];
@@ -60,7 +58,6 @@
         }
     }
     [tableView reloadData];
-    NSLog(@"%lu",(unsigned long)arrayW.count);
 }
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     return arrayW.count;

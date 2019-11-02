@@ -32,6 +32,7 @@
 		47426DC322D3876A00A5161B /* wet.m in Sources */ = {isa = PBXBuildFile; fileRef = 47426DC222D3876A00A5161B /* wet.m */; };
 		47426DC622D3878900A5161B /* elec.m in Sources */ = {isa = PBXBuildFile; fileRef = 47426DC522D3878900A5161B /* elec.m */; };
 		47CB28A0236AD009008B3CAB /* wasteCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 47CB289E236AD008008B3CAB /* wasteCell.m */; };
+		47CB28A3236D6229008B3CAB /* wasteTypeCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 47CB28A2236D6229008B3CAB /* wasteTypeCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -101,6 +102,8 @@
 		47426DC522D3878900A5161B /* elec.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = elec.m; sourceTree = "<group>"; };
 		47CB289E236AD008008B3CAB /* wasteCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = wasteCell.m; sourceTree = "<group>"; };
 		47CB289F236AD008008B3CAB /* wasteCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wasteCell.h; sourceTree = "<group>"; };
+		47CB28A1236D6229008B3CAB /* wasteTypeCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = wasteTypeCell.h; sourceTree = "<group>"; };
+		47CB28A2236D6229008B3CAB /* wasteTypeCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = wasteTypeCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -180,6 +183,8 @@
 				47426DC522D3878900A5161B /* elec.m */,
 				47CB289F236AD008008B3CAB /* wasteCell.h */,
 				47CB289E236AD008008B3CAB /* wasteCell.m */,
+				47CB28A1236D6229008B3CAB /* wasteTypeCell.h */,
+				47CB28A2236D6229008B3CAB /* wasteTypeCell.m */,
 			);
 			path = "垃圾分类demo";
 			sourceTree = "<group>";
@@ -370,6 +375,7 @@
 				4724B8ED230E988E00D51450 /* AFNetworkReachabilityManager.m in Sources */,
 				4724B8EC230E988E00D51450 /* AFURLRequestSerialization.m in Sources */,
 				47426DC622D3878900A5161B /* elec.m in Sources */,
+				47CB28A3236D6229008B3CAB /* wasteTypeCell.m in Sources */,
 				4724B8EA230E988E00D51450 /* AFHTTPSessionManager.m in Sources */,
 				4724B8E9230E988E00D51450 /* AFURLResponseSerialization.m in Sources */,
 				47213D0222D0612500DA38C4 /* AppDelegate.m in Sources */,

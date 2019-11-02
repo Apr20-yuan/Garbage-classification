@@ -41,16 +41,12 @@ UIImagePickerControllerDelegate
     _photoRec.frame=CGRectMake((SC_Width-widthOfBtn)/2, (SC_Height-widthOfBtn)/3, widthOfBtn, widthOfBtn);
     _photoRec.layer.cornerRadius = widthOfBtn/2;
     [_photoRec setImage:[UIImage imageNamed:@"photo"] forState:UIControlStateNormal];
-    
     [_photoRec setTitle:@"拍照识别" forState:UIControlStateNormal];
     _photoRec.titleLabel.font = [UIFont systemFontOfSize:20];
     [_photoRec setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     self.view.backgroundColor = [UIColor greenColor];
-    CGFloat totalHeight = _photoRec.imageView.frame.size.height + _photoRec.titleLabel.frame.size.height;
     [_photoRec setImageEdgeInsets:UIEdgeInsetsMake(-_photoRec.titleLabel.intrinsicContentSize.height, 0, 0, -_photoRec.titleLabel.intrinsicContentSize.width)];
     [_photoRec setTitleEdgeInsets:UIEdgeInsetsMake(_photoRec.currentImage.size.height, -_photoRec.currentImage.size.width, 0, 0)];
-//    [_photoRec setImageEdgeInsets:UIEdgeInsetsMake(-(totalHeight - _photoRec.imageView.frame.size.height), 0.0, 5, -_photoRec.titleLabel.frame.size.width)];
-//    [_photoRec setTitleEdgeInsets:UIEdgeInsetsMake(0.0, -_photoRec.imageView.frame.size.width - 6, -(totalHeight - _photoRec.titleLabel.frame.size.height)- 10,0.0)];
     [_photoRec addTarget:self action:@selector(imageViewIsSelector) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:_photoRec];
 #pragma mark 设置searchBar
@@ -125,7 +121,7 @@ UIImagePickerControllerDelegate
     //[_tableView reloadData];
     NSLog(@"count is %lu",(unsigned long)_arrayNet.count);
 }
-#pragma  mark tableview!
+#pragma  mark tableview
 -(void)creatTableView{
     _tableView = [[UITableView alloc]initWithFrame:CGRectMake(10, 150,self.view.bounds.size.width-20,self.view.bounds.size.height-150) style:UITableViewStyleGrouped];
     _tableView.delegate = self;
@@ -302,24 +298,18 @@ UIImagePickerControllerDelegate
             NSLog(@"请求错误：%@", error);
             return;
         }
-        // data到NSString
         NSDictionary * dict = [[NSDictionary alloc]init];
         dict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
-        //    NSLog(@"%@",dict);
         NSArray * list = [[NSArray alloc]init];
-        //self->_arrayNet = nil;
         list = [dict objectForKey:@"newslist"];
-            //NSLog(@"!!!list!!!\n%@",list);
         NSDictionary * dict2 = [[NSDictionary alloc]init];
         dict2 = [dict objectForKey:@"newslist"];
-           // NSLog(@"!!!dict!!!\n%@",dict2);
         [self->_arrayNet removeAllObjects];
             for(int i = 0; i < list.count ; i++)
             {
                 waste * tWaste = [[waste alloc]init];
                 NSDictionary * dict1 = [[NSDictionary alloc]init];
                 dict1 = list[i];
-               // NSLog(@"the dict is %@",dict1);
                 int type = [[dict1 objectForKey:@"type"] intValue];
                 switch (type) {
                     case 0:
@@ -351,11 +341,7 @@ UIImagePickerControllerDelegate
                         break;
                     }
                 }
-               // NSLog(@"%@",[dict1 objectForKey:@"name"]);
                 [self->_arrayNet addObject:tWaste];
-
-                
-
             }
             dispatch_async(dispatch_get_main_queue(), ^{
                 [self creatTableView];
