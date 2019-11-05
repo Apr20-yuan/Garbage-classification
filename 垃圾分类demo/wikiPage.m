@@ -75,13 +75,13 @@
 }
 -(UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-    UIView *view=[[UIView alloc] initWithFrame:CGRectMake(0, 0,SC_Width, 5)];
+    UIView *view=[[UIView alloc] initWithFrame:CGRectMake(0, 0,SC_Width, 0.1)];
     view.backgroundColor = [UIColor clearColor];
     return view ;
 }
 -(UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
 {
-    UIView *view=[[UIView alloc] initWithFrame:CGRectMake(0, 0,SC_Height, 5)];
+    UIView *view=[[UIView alloc] initWithFrame:CGRectMake(0, 0,SC_Height, 0.1)];
     view.backgroundColor = [UIColor clearColor];
     return view;
 }
