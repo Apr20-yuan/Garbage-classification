@@ -72,6 +72,10 @@ UIImagePickerControllerDelegate
    
     [self.view addSubview:_searchB];
     [self AFNetmonitor];
+    _load = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    _load.center = CGPointMake(self.view.frame.size.width * 0.5, self.view.frame.size.height * 0.5);
+    [self.view addSubview:_load];
+    
     
 }
 
@@ -271,7 +275,7 @@ UIImagePickerControllerDelegate
     }
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    [self.searchB resignFirstResponder];
+    [tableView deselectRowAtIndexPath:indexPath animated:NO];
 }
 #pragma mark AFNetwork
 - (void)AFGetData{
@@ -344,6 +348,7 @@ UIImagePickerControllerDelegate
                 [self->_arrayNet addObject:tWaste];
             }
             dispatch_async(dispatch_get_main_queue(), ^{
+                
                 [self creatTableView];
             });
            
@@ -393,6 +398,8 @@ UIImagePickerControllerDelegate
 }
 #pragma mark 摄像头
 - (void)imageViewIsSelector {
+    
+    
     
     //MARK: - 06.点击图片调起弹窗并检查权限;
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:nil preferredStyle:UIAlertControllerStyleActionSheet];
@@ -472,7 +479,7 @@ UIImagePickerControllerDelegate
 }
 
 - (void)alertAlbum {
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:@"请在设置中打开相册" preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:@"没有访问相册或相机的权限，请在设置中打开" preferredStyle:UIAlertControllerStyleAlert];
     UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
         [self dismissViewControllerAnimated:YES completion:nil];
     }];
@@ -494,6 +501,8 @@ UIImagePickerControllerDelegate
 #pragma mark POST传输base64编码后和图片
 - (void)netPost:(UIImage *)image
 {
+    [_load startAnimating];
+    [_photoRec setHidden:YES];
     NSURL * url = [NSURL URLWithString:@"http://api.tianapi.com/txapi/imglajifenlei/"];
     NSMutableURLRequest * request = [NSMutableURLRequest requestWithURL:url];
     request.timeoutInterval = 5.0;
@@ -569,6 +578,7 @@ UIImagePickerControllerDelegate
             NSLog(@"%@--%@--%d",wst.wName,wst.wType,wst.trust);
         }
         dispatch_async(dispatch_get_main_queue(), ^{
+            [_load stopAnimating];
             [self creatBack];
             [self->_photoRec setHidden:YES];
             [self creatTableViewImg];

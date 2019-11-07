@@ -8,15 +8,15 @@
 		<true/>
 	</dict>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>APP需要获取访问相册权限</string>
+	<string>垃圾分类需要获取访问相册权限</string>
 	<key>NSCameraUsageDescription</key>
-	<string>APP需要获取相机权限</string>
+	<string>垃圾分类需要获取相机权限</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
-	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<string>DongYuan</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
