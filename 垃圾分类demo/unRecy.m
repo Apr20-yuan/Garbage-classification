@@ -77,6 +77,9 @@
     cell.detailTextLabel.text = wst.wType;
     return cell;
 }
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    [tableView deselectRowAtIndexPath:indexPath animated:NO];
+}
 /*
  #pragma mark - Navigation
  

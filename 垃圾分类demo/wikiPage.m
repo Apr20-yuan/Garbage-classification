@@ -31,7 +31,7 @@
     _nav = [[UINavigationController alloc]initWithRootViewController:view1];
     UITabBarItem * wikiP = [[UITabBarItem alloc]initWithTitle:@"百科" image:[UIImage imageNamed:@"wiki"] tag:101];
     self.tabBarItem = wikiP;
-    self.title = @"垃圾分类";
+    self.title = @"百科";
 //#pragma mark searchBar的设定
 //    _searchB = [[UISearchBar alloc]initWithFrame:CGRectMake(0,self.navigationController.navigationBar.frame.size.height+[[UIApplication sharedApplication] statusBarFrame].size.height+5,SC_Width, 40)];
 //
@@ -54,7 +54,6 @@
 #pragma mark tableView
     _tableView = [[UITableView alloc]initWithFrame:CGRectMake(7, self.navigationController.navigationBar.frame.size.height+[[UIApplication sharedApplication] statusBarFrame].size.height+10, SC_Width-14, SC_Height) style:UITableViewStyleGrouped];
     _tableView.backgroundColor = [UIColor clearColor];
-    //_tableView.layer.cornerRadius = 10;
     _tableView.delegate = self;
     _tableView.dataSource = self;
     [self.view addSubview:_tableView];

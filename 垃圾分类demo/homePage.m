@@ -83,7 +83,7 @@ UIImagePickerControllerDelegate
 -(void)creatBack{
     UITabBarItem * homeP = [[UITabBarItem alloc]initWithTitle:@"首页" image:[UIImage imageNamed:@"home"] tag:101];
     self.tabBarItem = homeP;
-    UIBarButtonItem * back = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemClose target:self action:@selector(backOnclick)];
+    UIBarButtonItem * back = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemStop target:self action:@selector(backOnclick)];
    // UIBarButtonItem * back = [[UIBarButtonItem alloc]initWithTitle:@"返回首页" style:UIBarButtonSystemItemCancel target:self action:@selector(backOnclick)];
     self.navigationItem.leftBarButtonItem = back;
 }
@@ -279,17 +279,16 @@ UIImagePickerControllerDelegate
 }
 #pragma mark AFNetwork
 - (void)AFGetData{
-    
+    if([self AFNetmonitor])
+    {
         NSString * urlStr = [NSString stringWithFormat:@"http://api.tianapi.com/txapi/lajifenlei/?key=3db609bd6c1e6b9b1522f9306f7d4b9a&word=%@",_searchB.text];
         urlStr = [urlStr stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];//参数带中文需转UTF8
         NSURL *url = [NSURL URLWithString:urlStr];
-        NSLog(@"url is %@",urlStr);
-        
         NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
 
         [request setHTTPMethod:@"GET"]; //请求方式
 
-        [request setTimeoutInterval:10]; //请求超时限制
+        [request setTimeoutInterval:5]; //请求超时限制
 
         [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData]; //缓存模式
 
@@ -299,8 +298,8 @@ UIImagePickerControllerDelegate
 
     NSURLSessionDataTask *task = [session dataTaskWithRequest:request completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         if (error) {
-            NSLog(@"请求错误：%@", error);
-            return;
+            
+            NSLog(@"%@",error);
         }
         NSDictionary * dict = [[NSDictionary alloc]init];
         dict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
@@ -326,7 +325,6 @@ UIImagePickerControllerDelegate
                     {
                         tWaste.wName = [dict1 objectForKey:@"name"];
                         tWaste.wType = @"有害垃圾";
-                        break;
                     }
                     case 2:
                     {
@@ -341,7 +339,7 @@ UIImagePickerControllerDelegate
                         break;
                     }
                     default:
-                    {   NSLog(@"错误！！");
+                    {   //NSLog(@"错误！！");
                         break;
                     }
                 }
@@ -350,37 +348,59 @@ UIImagePickerControllerDelegate
             dispatch_async(dispatch_get_main_queue(), ^{
                 
                 [self creatTableView];
+                self.rightSwipeGestureRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipes:)];
+                         
+                    self.rightSwipeGestureRecognizer.direction = UISwipeGestureRecognizerDirectionRight;
+                         
+                
+                    [self.view addGestureRecognizer:self.rightSwipeGestureRecognizer];
             });
            
         }];
         // 执行请求任务
 
         [task resume];
+    }
+    else
+    {
+        //NSLog(@"!!!!!!");
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:@"数据传输出错，请检查网络环境" preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+            [self dismissViewControllerAnimated:YES completion:nil];
+        }];
+        [alert addAction:cancel];
+        [self presentViewController:alert animated:YES completion:nil];
+    }
 }
-- (void)AFNetmonitor{
-    
+- (BOOL)AFNetmonitor{
+    static NSInteger netStatus = NO;
     [[AFNetworkReachabilityManager sharedManager] startMonitoring];
     [[AFNetworkReachabilityManager sharedManager] setReachabilityStatusChangeBlock:^(AFNetworkReachabilityStatus status) {
         switch (status) {
             case AFNetworkReachabilityStatusNotReachable:
             {
-                NSLog(@"无网络连接！");
+                
+                NSLog(@"无网络连接!");
+                netStatus = NO;
                 break;
             }
             case AFNetworkReachabilityStatusReachableViaWiFi:
             {
                 NSLog(@"WiFi接入!");
+                netStatus = YES;
                 break;
             }
             case AFNetworkReachabilityStatusReachableViaWWAN:
             {
                 NSLog(@"通过蜂窝网络接入！");
+                netStatus = YES;
                 break;
             }
             default:
                 break;
         }
     }];
+    return netStatus;
     
 }
 
@@ -501,6 +521,8 @@ UIImagePickerControllerDelegate
 #pragma mark POST传输base64编码后和图片
 - (void)netPost:(UIImage *)image
 {
+    if([self AFNetmonitor])
+    {
     [_load startAnimating];
     [_photoRec setHidden:YES];
     NSURL * url = [NSURL URLWithString:@"http://api.tianapi.com/txapi/imglajifenlei/"];
@@ -511,7 +533,7 @@ UIImagePickerControllerDelegate
     NSString * str = [data base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
     NSString *page = CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(kCFAllocatorDefault, (CFStringRef)str, nil, CFSTR(":/?#[]@!$&’()*+,;="), kCFStringEncodingUTF8)); //重新编码 base64 字符串在传输过程中特殊字符（比如：+）被替换成空格了导致不能转
     NSString * bodyStr = [NSString stringWithFormat:@"key=%@&img=%@",@"3db609bd6c1e6b9b1522f9306f7d4b9a",page];
-    NSLog(@"bodyString is %@",bodyStr);
+    //NSLog(@"bodyString is %@",bodyStr);
     request.HTTPBody = [bodyStr dataUsingEncoding:NSUTF8StringEncoding];
     NSURLSession *session = [NSURLSession sharedSession];
     
@@ -519,7 +541,7 @@ UIImagePickerControllerDelegate
         [self->_arrayNetImg removeAllObjects];
         NSDictionary * jsonDict = [[NSDictionary alloc]init];
         jsonDict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
-        NSLog(@"json is %@",jsonDict);
+       //NSLog(@"json is %@",jsonDict);
         NSArray * list = [[NSArray alloc]init];
         list = [jsonDict objectForKey:@"newslist"];
         for(int i = 0; i < list.count ; i++)
@@ -565,7 +587,7 @@ UIImagePickerControllerDelegate
                         break;
                     }
                     default:
-                    {   NSLog(@"错误！！");
+                    {   //NSLog(@"错误！！");
                         break;
                     }
                 }
@@ -575,21 +597,41 @@ UIImagePickerControllerDelegate
         {
             waste * wst = [[waste alloc]init];
             wst = self->_arrayNetImg[i];
-            NSLog(@"%@--%@--%d",wst.wName,wst.wType,wst.trust);
+            //NSLog(@"%@--%@--%d",wst.wName,wst.wType,wst.trust);
         }
         dispatch_async(dispatch_get_main_queue(), ^{
-            [_load stopAnimating];
+            [self->_load stopAnimating];
             [self creatBack];
             [self->_photoRec setHidden:YES];
             [self creatTableViewImg];
+            
+            self.rightSwipeGestureRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(handleSwipes:)];
+                 
+            self.rightSwipeGestureRecognizer.direction = UISwipeGestureRecognizerDirectionRight;
+                 
+        
+            [self.view addGestureRecognizer:self.rightSwipeGestureRecognizer];
         });
         
     }]
      resume];
-
+    }
+    else
+    {
+        NSLog(@"!!!!!!");
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:@"数据传输出错，请检查网络环境" preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+            [self dismissViewControllerAnimated:YES completion:nil];
+        }];
+        [alert addAction:cancel];
+        [self presentViewController:alert animated:YES completion:nil];
+    }
 
 
     
 }
-
+- (void)handleSwipes:(UISwipeGestureRecognizer *)sender
+{
+    [self backOnclick];
+}
 @end

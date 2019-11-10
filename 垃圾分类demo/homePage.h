@@ -26,6 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic,strong) NSMutableArray * arrayNet;
 @property(nonatomic,strong) NSMutableArray * arrayNetImg;
 @property(nonatomic, strong) UIActivityIndicatorView * load;
+@property (nonatomic, strong) UISwipeGestureRecognizer *rightSwipeGestureRecognizer;
 @end
 
 NS_ASSUME_NONNULL_END

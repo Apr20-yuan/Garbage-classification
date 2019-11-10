@@ -28,13 +28,10 @@
     wiki.title = @"百科";
     wiki.view.backgroundColor = [UIColor colorWithRed:204/255.0 green:221/255.0 blue:201.0/255.0 alpha:1.0];
     UITabBarController * tabBar = [[UITabBarController alloc]init];
-//    NSArray * array = [[NSArray alloc]initWithObjects:home,wiki,account, nil];
-//    tabBar.viewControllers = array;
     tabBar.selectedIndex = 0;
     tabBar.tabBar.barTintColor = [UIColor colorWithRed:105/255.0 green:177/255.0 blue:158/255.0 alpha:1.0];
     tabBar.viewControllers = @[nav1,nav2];
     self.window.rootViewController = tabBar;
-//    UINavigationController * nav = [[UINavigationController alloc]initWithRootViewController:home];
     [self.window makeKeyAndVisible];
     return YES;
 }

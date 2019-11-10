@@ -49,7 +49,7 @@
 
 /* Begin PBXFileReference section */
 		183333D68CA4BD138D165A48 /* libPods-垃圾分类demo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-垃圾分类demo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		47213CFD22D0612500DA38C4 /* 垃圾分类demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "垃圾分类demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		47213CFD22D0612500DA38C4 /* 垃圾分类.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "垃圾分类.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		47213D0022D0612500DA38C4 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		47213D0122D0612500DA38C4 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		47213D0722D0612500DA38C4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -132,7 +132,7 @@
 		47213CFE22D0612500DA38C4 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				47213CFD22D0612500DA38C4 /* 垃圾分类demo.app */,
+				47213CFD22D0612500DA38C4 /* 垃圾分类.app */,
 				47213D1822D0612800DA38C4 /* 垃圾分类demoTests.xctest */,
 				47213D2322D0612800DA38C4 /* 垃圾分类demoUITests.xctest */,
 			);
@@ -228,7 +228,7 @@
 			);
 			name = "垃圾分类demo";
 			productName = "垃圾分类demo";
-			productReference = 47213CFD22D0612500DA38C4 /* 垃圾分类demo.app */;
+			productReference = 47213CFD22D0612500DA38C4 /* 垃圾分类.app */;
 			productType = "com.apple.product-type.application";
 		};
 		47213D1722D0612800DA38C4 /* 垃圾分类demoTests */ = {
@@ -559,6 +559,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1.0.1;
 				DEVELOPMENT_TEAM = SQZ65PAHQ7;
 				INFOPLIST_FILE = "垃圾分类demo/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
@@ -566,10 +567,11 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = DongYuan;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				PRODUCT_NAME = "垃圾分类";
+				SKIP_INSTALL = NO;
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -579,6 +581,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1.0.1;
 				DEVELOPMENT_TEAM = SQZ65PAHQ7;
 				INFOPLIST_FILE = "垃圾分类demo/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
@@ -586,10 +589,11 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = DongYuan;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				PRODUCT_NAME = "垃圾分类";
+				SKIP_INSTALL = NO;
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
