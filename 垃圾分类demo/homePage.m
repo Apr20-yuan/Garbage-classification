@@ -127,6 +127,16 @@ UIImagePickerControllerDelegate
 }
 #pragma  mark tableview
 -(void)creatTableView{
+    NSLog(@"is in 1");
+    if(self.arrayNet.count == 0)
+    {
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:@"暂无相关结果，欢迎补充" preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+            [self dismissViewControllerAnimated:YES completion:nil];
+        }];
+        [alert addAction:cancel];
+        [self presentViewController:alert animated:YES completion:nil];
+    }
     _tableView = [[UITableView alloc]initWithFrame:CGRectMake(10, 150,self.view.bounds.size.width-20,self.view.bounds.size.height-150) style:UITableViewStyleGrouped];
     _tableView.delegate = self;
     _tableView.dataSource = self;
@@ -135,6 +145,7 @@ UIImagePickerControllerDelegate
     
 }
 -(void)creatTableViewImg{
+    
     _tableViewImg = [[UITableView alloc]initWithFrame:CGRectMake(10,150,SC_Width-20,SC_Height-150) style:UITableViewStyleGrouped];
     _tableViewImg.dataSource = self;
     _tableViewImg.delegate = self;
@@ -175,6 +186,7 @@ UIImagePickerControllerDelegate
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     if(tableView == _tableView)
     {
+       
     NSString * cellid = @"cell";
         wasteCell * cell = [[wasteCell alloc]init];
     if(cell == nil)
@@ -305,8 +317,8 @@ UIImagePickerControllerDelegate
         dict = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:nil];
         NSArray * list = [[NSArray alloc]init];
         list = [dict objectForKey:@"newslist"];
-        NSDictionary * dict2 = [[NSDictionary alloc]init];
-        dict2 = [dict objectForKey:@"newslist"];
+//        NSDictionary * dict2 = [[NSDictionary alloc]init];
+//        dict2 = [dict objectForKey:@"newslist"];
         [self->_arrayNet removeAllObjects];
             for(int i = 0; i < list.count ; i++)
             {
@@ -597,7 +609,6 @@ UIImagePickerControllerDelegate
         {
             waste * wst = [[waste alloc]init];
             wst = self->_arrayNetImg[i];
-            //NSLog(@"%@--%@--%d",wst.wName,wst.wType,wst.trust);
         }
         dispatch_async(dispatch_get_main_queue(), ^{
             [self->_load stopAnimating];
@@ -618,7 +629,6 @@ UIImagePickerControllerDelegate
     }
     else
     {
-        NSLog(@"!!!!!!");
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:@"数据传输出错，请检查网络环境" preferredStyle:UIAlertControllerStyleAlert];
         UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
             [self dismissViewControllerAnimated:YES completion:nil];
